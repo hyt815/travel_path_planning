@@ -1,10 +1,10 @@
-package Pojo;
+package Demo.Pojo;
 
 public class Region {
     private long id;
     private String title;
     private String address;
-    private int[] location;
+    private double[] location;
     private int adcode;
     private String province;
     private String city;
@@ -35,11 +35,11 @@ public class Region {
         this.address = address;
     }
 
-    public int[] getLocation() {
+    public double[] getLocation() {
         return location;
     }
 
-    public void setLocation(int[] location) {
+    public void setLocation(double[] location) {
         this.location = location;
     }
 
