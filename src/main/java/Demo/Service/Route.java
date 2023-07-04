@@ -1,6 +1,6 @@
 package Demo.Service;
 
-import Demo.Dao.Redis.Redistest;
+import Demo.Dao.Redis.Redis_area;
 import Demo.Pojo.*;
 import Demo.Unit.ProcessingTool;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,39 +13,52 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service("getroute")
-public class Getroute {
+public class Route {
 
     //数据库连接类
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
-    private Redistest red;
+    private Redis_area red;
 
     public String table="area";
 
     public String getroute1(Point start, Point end){
         TreeMap<String,String> map=new TreeMap<String, String>();
-        Area[] areas=getArea(start,end);
-        StringBuilder po=new StringBuilder("");
-        //完成--格式匹配--从[a1,b1,c1,d1,e1,f1],[a2,b2,c2,d2,e2,f2],[a3,b3,c3,d3,e3,f3]到a1,b1;c1,d1;e1,f1|a2,b2,c2,d2,e2,f2|a3,b3,c3,d3,e3,f3
-        for(Area a:areas){
-            String tmp=spiltPolygon(a.getPolygon());
-            po.append(tmp);
-            po.append("|");
+        Area[] areas=red.getAreas(start,end);
+        if (areas.length == 0){
+            areas=getArea(start,end);
         }
-        if (!po.toString().equals("")){
-            po.deleteCharAt(po.length()-1);
-            map.put("avoid_polygons",po.toString());
+        if (areas.length != 0) {
+            StringBuilder po = new StringBuilder("");
+            //完成--格式匹配--从[a1,b1,c1,d1,e1,f1],[a2,b2,c2,d2,e2,f2],[a3,b3,c3,d3,e3,f3]到a1,b1;c1,d1;e1,f1|a2,b2,c2,d2,e2,f2|a3,b3,c3,d3,e3,f3
+            for (Area a : areas) {
+                String tmp = spiltPolygon(a.getPolygon());
+                po.append(tmp);
+                po.append("|");
+            }
+            if (!po.toString().equals("")) {
+                po.deleteCharAt(po.length() - 1);
+                map.put("avoid_polygon", po.toString());
+            }
         }
         map.put("key",ProcessingTool.KEY);
         map.put("from",start.toString());
         map.put("to",end.toString());
         String url=ProcessingTool.getURL("https://apis.map.qq.com","/ws/direction/v1/driving",map);
-        System.out.println(url);
         return ProcessingTool.sendurl(url);
     }
 
-    public Area[] getArea(Point start,Point end){
+    public String getgoal(String goal,String citylocation){
+        TreeMap<String,String> map=new TreeMap<String, String>();
+        map.put("key",ProcessingTool.KEY);
+        map.put("keyword",goal);
+        map.put("boundary","nearby("+citylocation+",1000,1)");
+        String url=ProcessingTool.getURL("https://apis.map.qq.com","/ws/place/v1/search",map);
+        return ProcessingTool.sendurl(url);
+    }
+
+    private Area[] getArea(Point start,Point end){
 
         String sql = "select * from "+table;
         List<Map<String, Object>> list =  jdbcTemplate.queryForList(sql);
@@ -104,14 +117,12 @@ public class Getroute {
 
         String[] less=stringBuffer.toString().split(";");
         int all=less.length;
-        System.out.println(all);
         if (all>16) {
             stringBuffer = new StringBuilder("");
             int a=all/16;
             for (int i = 0; i < 16; i++) {
                 stringBuffer.append(less[i*16]);
                 stringBuffer.append(";");
-                System.out.println(i);
             }
             stringBuffer.deleteCharAt(stringBuffer.length()-1);
         }

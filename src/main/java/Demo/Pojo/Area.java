@@ -35,16 +35,3 @@ public class Area {
         this.polygon = polygon;
     }
 }
-/*
-            {
-                    "id": "110101",
-                    "fullname": "东城区",
-                    "location": {
-                    "lat": "39.928353",
-                    "lng": "116.416357"
-                    },
-                    "polygon": [ //行政区划轮廓点串，search及getchildren接口加get_polygon=1/2时返回
-                    [116.809403,39.61482,116.790175,39.610555,116.780286,39.593196....],
-                    //其它项省略(若有)...
-                    ]
-                    },*/
