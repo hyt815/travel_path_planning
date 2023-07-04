@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Hello world!</title>
+  <style type="text/css">
+    #container{
+      /*地图(容器)显示大小*/
+      left: 30%;
+      right: 30%;
+      top: 35%;
+      width:40%;
+      height:30%;
+    }
+    #text{
+      position: absolute;
+      top: 10%;
+      left: 10%;
+    }
+    #button{
+      position: relative;
+      left:40%;
+      top: 10px;
+    }
+  </style>
+  <!--引入Javascript API GL，参数说明参见下文-->
+  <script src="https://map.qq.com/api/gljs?v=1.exp&key=Y3FBZ-EFNW6-4W6SB-E7DFP-CCV7V-LGBZL"></script>
+  <script src="/js/getapi.js" ></script>
+  <script src="/js/md5.js"></script>
+  <script src="/js/mapshow.js"></script>
+</head>
+<!-- 页面载入后，调用init函数 -->
+<body onload="initMap(39.90469,116.40717)">
+<!-- 定义地图显示容器 -->
+<div id="container"></div>
+<div id="text">
+  <div>起点：
+    <textarea id="from"></textarea>
+  </div>
+  <div>终点：
+    <textarea id="to"></textarea>
+  </div>
+  <div>
+  <button id="button" onclick="getroute()">确定</button>
+  </div>
+</div>
+</body>
+</html>
